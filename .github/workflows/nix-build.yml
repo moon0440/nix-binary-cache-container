@@ -36,6 +36,7 @@ jobs:
 
     - name: Push Docker Image ghcr.io
       run: |
+        set -ex
         echo "Loading image name and tag from 'result'..."
         # Assuming your result file contains the image name and tag in 'yourimage:tag' format
         IMAGE_NAME_TAG=$(cat result | grep -o '[^/]*$')
