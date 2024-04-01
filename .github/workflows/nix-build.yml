@@ -16,6 +16,7 @@ jobs:
     - name: Set up Nix
       uses: cachix/install-nix-action@v17
       with:
+        nix_path: nixpkgs=channel:nixos-unstable
         install_options: '--no-daemon --yes'
 
     - name: Nix Check Build
