@@ -1,0 +1,59 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches:
+      - main # or any other branch
+
+jobs:
+  build-and-push-image:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Nix
+      uses: cachix/install-nix-action@v17
+      with:
+        install_options: '--daemon'
+
+    - name: Nix Check Build
+      run: |
+        nix-build --check nix-cache.nix
+
+    - name: Build with Nix
+      run: |
+        nix-build nix-cache.nix
+
+    - name: Load Docker Image
+      run: |
+        docker load < result
+
+    - name: Log in to GitHub Container Registry
+      uses: docker/login-action@v2
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Push Docker Image ghcr.io
+      run: |
+        echo "Loading image name and tag from 'result'..."
+        # Assuming your result file contains the image name and tag in 'yourimage:tag' format
+        IMAGE_NAME_TAG=$(cat result | grep -o '[^/]*$')
+        echo "Image name and tag: $IMAGE_NAME_TAG"
+        
+        # Generating a new tag with YYMMDD.<unix_timestamp> format
+        DATE_TAG=$(date +%y%m%d.%s)
+        echo "New date tag: $DATE_TAG"
+        
+        # Tagging the image with 'latest'
+        docker tag $IMAGE_NAME_TAG ghcr.io/${{ github.repository_owner }}/ncp:latest
+        
+        # Also tagging the image with the new date tag
+        docker tag $IMAGE_NAME_TAG ghcr.io/${{ github.repository_owner }}/ncp:$DATE_TAG
+        
+        # Pushing both tags to GHCR
+        docker push ghcr.io/${{ github.repository_owner }}/ncp:latest
+        docker push ghcr.io/${{ github.repository_owner }}/ncp:$DATE_TAG
