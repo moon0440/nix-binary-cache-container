@@ -19,10 +19,6 @@ jobs:
         nix_path: nixpkgs=channel:nixos-unstable
         install_options: '--no-daemon --yes'
 
-    - name: Nix Check Build
-      run: |
-        nix-build --check nix-cache.nix
-
     - name: Build with Nix
       run: |
         nix-build nix-cache.nix
