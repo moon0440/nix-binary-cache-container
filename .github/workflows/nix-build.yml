@@ -16,7 +16,7 @@ jobs:
     - name: Set up Nix
       uses: cachix/install-nix-action@v17
       with:
-        install_options: '--daemon'
+        install_options: '--no-daemon --yes'
 
     - name: Nix Check Build
       run: |
