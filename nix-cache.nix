@@ -19,8 +19,6 @@ in pkgs.dockerTools.buildLayeredImage {
   tag = "latest";
   created = "now";
   contents = [ 
-    pkgs.bashInteractive
-    pkgs.coreutils
     pkgs.nginx
     pkgs.dockerTools.fakeNss
   ];

@@ -36,7 +36,6 @@ jobs:
 
     - name: Push Docker Image ghcr.io
       run: |
-        set -ex
         echo "Loading image name and tag from 'result'..."
         IMAGE_NAME_TAG="ncp:latest"
         echo "Image name and tag: $IMAGE_NAME_TAG"
